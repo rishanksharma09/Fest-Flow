@@ -2,7 +2,7 @@ import asyncHandler from "../utils/asyncHandler.js"
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import { User } from "../models/user.model.js";
-import { uploadImageOnCloudinary } from "../utils/cloudinary.js";
+import { deleteImageOnCloudinary, uploadImageOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken"
 
 const options = {
@@ -140,4 +140,93 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
 })
 
+export const changePassword = asyncHandler(async (req, res) => {
+    const { oldPass, newPass } = req.body
+    if (!oldPass || !newPass) {
+        throw new ApiError(404, "fill the fields")
+    }
 
+    const user = await User.findById(req.user._id)
+
+    if (!user) {
+        throw new ApiError(404, "Unauthorized req")
+    }
+
+    const isCorrect = await user.isPasswordCorrect(oldPass)
+
+    if (!isCorrect) {
+        throw new ApiError(400, "Old password does not match")
+    }
+
+    user.password = newPass
+    await user.save({ validateBeforeSave: false })
+
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "password changed successfuly"))
+
+})
+
+export const getCurrentUser = asyncHandler(async (req, res) => {
+    return res
+        .status(200)
+        .json(new ApiResponse(200, req.user, "current user fetched successfully"))
+})
+
+export const updateAccountDetails = asyncHandler(async (req, res) => {
+    const { name,  email } = req.body
+
+    if (!name && !email) {
+        throw new ApiError(400, "All fields are required")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                fullName,
+                username: username
+            }
+        },
+        { new: true }
+
+    ).select("-password -refreshToken")
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "Account details updated successfully"))
+});
+
+export const updateUserAvatar =asyncHandler(async(req,res) =>{
+  const user = await User.findById(req.user?._id)
+  if(!user){
+    throw new ApiError(401,"Unauthorised request")
+  }
+
+  const newAvatar=req.file;
+  if(!newAvatar){
+    throw new ApiError(400,"No new Avatar given")
+  }
+
+  const newAvatarPath=newAvatar.path;
+  
+  if(!newAvatarPath){
+    throw new ApiError(400,"No new Avatar given")
+  }
+
+  let cloudinaryAvatarResponse = { url: "", publicId: "" };
+
+  if (newAvatar) {
+    cloudinaryAvatarResponse = await uploadImageOnCloudinary(newAvatarPath);
+  }
+  const oldAvatarPublicId= user.avatar?.publicId;
+
+  user.avatar= cloudinaryAvatarResponse;
+  user.save({validateBeforeSave:false});
+
+  await deleteImageOnCloudinary(oldAvatarPublicId)
+
+  return res.status(200).json(new ApiResponse(200,user,"Avatar updated successfully"))
+  
+})

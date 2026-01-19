@@ -30,3 +30,14 @@ export const uploadImageOnCloudinary = async (imagePath) => {
       await fs.unlink(imagePath)
     }
 };
+
+export const deleteImageOnCloudinary = async(public_id) =>{
+  try{
+    const res=await cloudinary.uploader.destroy(public_id);
+    console.log(res)
+
+  }
+  catch(err){
+    throw err;
+  }
+}
