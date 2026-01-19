@@ -13,16 +13,6 @@ const userSchema = new mongoose.Schema(
       maxlength: 50,
     },
 
-    username: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
-      unique: true,
-      minlength: 3,
-      maxlength: 30,
-    },
-
     email: {
       type: String,
       required: true,
@@ -34,7 +24,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       minlength: 6,
-      select: false,
     },
 
     provider: {
@@ -43,8 +32,8 @@ const userSchema = new mongoose.Schema(
     },
 
     avatar: {
-      url: { type: String, default: "" },
       publicId: { type: String, default: "" },
+      url: { type: String, default: "" },
     },
 
     role: {
@@ -74,15 +63,14 @@ userSchema.pre('save', async function () {
   return;
 })
 
-userSchema.method("isPasswordCorrect", async function (password) {
+userSchema.methods.isPasswordCorrect= async function (password) {
   return await bcrypt.compare(password, this.password)
-})
+}
 
 userSchema.methods.generateAccessToken= async function () {
   return jwt.sign({
     _id: this._id,
     name: this.name,
-    username: this.username,
     email: this.email
   }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY });
 }

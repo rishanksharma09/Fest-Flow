@@ -1,12 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
 
-import { app } from "./app.js";
+const { app } = await import("./app.js")
 import { connectDb } from "./connectDB/connectDB.js";
 
-app.get("/", (req, res) => {
-  res.send(`Hello !`);
-});
 
 const main = async () => {
   try {

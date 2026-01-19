@@ -1,11 +1,10 @@
-import ApiResponse from "../utils/ApiResponse.js";
-
 const errorHandler = (err, req, res, next) => {
-  if (!err) return next();
+  const statusCode = err.statusCode || 500;
 
-  return res.status(err.statusCode).json(
-    new ApiResponse(err.statusCode, null, err.message)
-  );
+  return res.status(statusCode).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
 };
 
 export default errorHandler;
