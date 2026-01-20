@@ -1,0 +1,1 @@
+import { society } from "../models/society.model.js";

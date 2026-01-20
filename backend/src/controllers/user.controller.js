@@ -178,16 +178,20 @@ export const updateAccountDetails = asyncHandler(async (req, res) => {
     const { name,  email } = req.body
 
     if (!name && !email) {
-        throw new ApiError(400, "All fields are required")
+        throw new ApiError(400, "All fields are empty")
     }
 
-    const user = await User.findByIdAndUpdate(
+     const updateFields = {};
+
+  if (name?.trim()) updateFields.name = name.trim();
+  if (email?.trim()) updateFields.email = email.trim();
+
+
+  const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
-            $set: {
-                fullName,
-                username: username
-            }
+            $set: updateFields
+            
         },
         { new: true }
 
