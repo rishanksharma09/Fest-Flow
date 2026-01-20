@@ -24,7 +24,7 @@ export const uploadImageOnCloudinary = async (imagePath) => {
       const result = await cloudinary.uploader.upload(imagePath, options);
       await fs.unlink(imagePath)
 
-      return {publicId: result.public_id ,url: result.secure_url};
+      return {publicId: result?.public_id ,url: result?.secure_url};
     } catch (error) {
       console.error(error);
       await fs.unlink(imagePath)

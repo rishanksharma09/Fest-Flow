@@ -3,7 +3,7 @@ import slugify from "slugify"
 
 
 
-const societySchema = new mongoose.schema({
+const societySchema = new mongoose.Schema({
 
     name: {
         type: String,
@@ -55,7 +55,8 @@ const societySchema = new mongoose.schema({
     },
 
     isApproved: {
-        type: Boolean
+        type: Boolean,
+        default:false
     },
 
     admins: [{
@@ -72,7 +73,7 @@ societySchema.pre('save', async function () {
     let slug = baseSlug;
     let count = 1;
 
-    while (await society.exists({ slug })) {
+    while (await Society.exists({ slug })) {
         count++;
         slug = `${baseSlug}-${count}`;
     }
