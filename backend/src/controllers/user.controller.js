@@ -227,7 +227,7 @@ export const updateUserAvatar =asyncHandler(async(req,res) =>{
   const oldAvatarPublicId= user.avatar?.publicId;
 
   user.avatar= cloudinaryAvatarResponse;
-  user.save({validateBeforeSave:false});
+  await user.save({validateBeforeSave:false});
 
   await deleteImageOnCloudinary(oldAvatarPublicId)
 

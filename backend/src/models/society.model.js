@@ -68,6 +68,9 @@ const societySchema = new mongoose.Schema({
 
 
 societySchema.pre('save', async function () {
+    if(this.slug){
+        return 
+    }
     const baseSlug = slugify(this.name, { lower: true, strict: true });
 
     let slug = baseSlug;
