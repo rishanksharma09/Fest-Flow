@@ -42,20 +42,7 @@ export default function Hero() {
                                 </button>
                             </div>
 
-                            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
-                                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
-                                    Hackathons
-                                </span>
-                                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
-                                    Concerts
-                                </span>
-                                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
-                                    Tech Talks
-                                </span>
-                                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
-                                    Standups
-                                </span>
-                            </div>
+                        
                         </div>
                     </div>
                 </div>

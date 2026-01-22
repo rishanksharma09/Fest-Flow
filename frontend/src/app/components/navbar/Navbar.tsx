@@ -37,13 +37,13 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           
           <Link
-            href="#"
+            href="/signin"
             className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
           >
             Login
           </Link>
           <Link
-            href="#"
+            href="/register"
             className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
           >
             Sign up

@@ -2,6 +2,7 @@ import Navbar from "./components/navbar/Navbar";
 import Hero from "./components/sections/Hero";
 import Categories from "./components/sections/Categories";
 import EventGridSection from "./components/sections/EventGridSection";
+import Footer from "./components/footer/Footer";
 
 export default function HomePage() {
   return (
@@ -12,19 +13,7 @@ export default function HomePage() {
         <Hero />
         <Categories />
 
-        <EventGridSection
-          id="popular"
-          title="Popular Events in Mumbai"
-          subtitle="Handpicked events people are loving this week"
-          chips={["All", "Today", "Tomorrow", "This Weekend", "Free"]}
-        />
-
-        <EventGridSection
-          id="discover"
-          title="Discover Best of Online Events"
-          subtitle="Join live sessions, workshops, and community meetups"
-          chips={["Trending", "Workshops", "Tech", "Design", "Business"]}
-        />
+       
 
         <section className="py-14">
           <div className="mx-auto w-full max-w-6xl px-4">
@@ -63,36 +52,14 @@ export default function HomePage() {
           </div>
         </section>
 
-        <EventGridSection
-          id="trending"
-          title="Trending Events around the World"
-          subtitle="What people are bookmarking globally"
-          chips={["Global", "Hackathons", "Conferences", "Meetups"]}
+         <EventGridSection
+          id="popular"
+          title="Popular Events in Mumbai"
+          subtitle="Handpicked events people are loving this week"
+          chips={["All", "Today", "Tomorrow", "This Weekend", "Free"]}
         />
 
-        <footer className="border-t border-slate-200 py-10">
-          <div className="mx-auto w-full max-w-6xl px-4">
-            <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-              <div>
-                <p className="text-sm font-semibold text-slate-900">FestFlow</p>
-                <p className="mt-1 text-sm text-slate-600">
-                  A modern events UI — plug your backend and ship.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3 text-sm text-slate-600">
-                <a className="hover:text-slate-900" href="#">
-                  Privacy
-                </a>
-                <a className="hover:text-slate-900" href="#">
-                  Terms
-                </a>
-                <a className="hover:text-slate-900" href="#">
-                  Contact
-                </a>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <Footer/>
       </main>
     </div>
   );
