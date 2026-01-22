@@ -16,6 +16,7 @@ export const verifyJwt=async(req,res,next)=>{
             throw new ApiError(401,"unauthorized request")
         }
     
+        
         const user=await User.findById(decodedAccessToken._id).select("-password -refreshToken")
         if(!user){
             throw new ApiError("User not found")

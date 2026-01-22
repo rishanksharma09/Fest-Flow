@@ -5,6 +5,7 @@ import Navbar from "../../components/navbar/Navbar";
 import { useState } from "react";
 import { api } from "../../../../lib/axios"
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export default function SignInPage() {
 
@@ -29,7 +30,9 @@ export default function SignInPage() {
 
       console.log("Login success:", res.data);
 
-      router.push("/"); // redirect after login
+      await useAuthStore.getState().fetchUser();
+
+      router.push("/");
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
