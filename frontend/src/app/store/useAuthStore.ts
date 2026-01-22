@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const res = await api.get("/user/get-current-user"); 
 
       set({
-        user: res.data || null,
+        user: res.data.data || null,
         loading: false,
       });
     } catch (err: any) {

@@ -47,7 +47,6 @@ export default function SignInPage() {
 
   return (
     <>
-      <Navbar />
       <div className=" bg-white text-slate-900">
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white" />

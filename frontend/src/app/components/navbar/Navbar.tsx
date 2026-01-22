@@ -8,6 +8,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const currentUser = useAuthStore((state) => state.user)
   const loading = useAuthStore((s) => s.loading);
+  console.log("navbar",currentUser)
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur">
@@ -37,7 +38,7 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {!loading && currentUser && <div className="hidden items-center gap-3 md:flex">
+        {!currentUser && <div className="hidden items-center gap-3 md:flex">
 
           <Link
             href="/signin"
@@ -82,7 +83,7 @@ export default function Navbar() {
                 </a>
               ))}
 
-              <div className="mt-2 grid grid-cols-2 gap-2">
+              {!currentUser && <div className="mt-2 grid grid-cols-2 gap-2">
                 <Link
                   href="#"
                   className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-center text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50"
@@ -95,7 +96,7 @@ export default function Navbar() {
                 >
                   Sign up
                 </Link>
-              </div>
+              </div>}
             </div>
           </div>
         </div>

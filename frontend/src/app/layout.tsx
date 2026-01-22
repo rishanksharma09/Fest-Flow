@@ -1,3 +1,4 @@
+import Navbar from "./components/navbar/Navbar";
 
 import type { Metadata } from "next";
 import "./globals.css";
@@ -29,6 +30,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Navbar/>
           {children}
         </ThemeProvider>
         </Providers>
