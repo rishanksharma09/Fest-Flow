@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { api } from "@/lib/axios";
+import { capitaliseTitle } from "../utils/capitlaiseTitle";
 
 export type User = {
   _id: string;
@@ -35,7 +36,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const res = await api.get("/user/get-current-user"); 
 
       set({
-        user: res.data.data || null,
+        user: { ...res.data?.data, name: capitaliseTitle(res.data?.data?.name) },
         loading: false,
       });
     } catch (err: any) {

@@ -1,18 +1,88 @@
 "use client"
 import { useAuthStore } from "../../store/useAuthStore";
+import { useRouter } from "next/navigation";
+import { getFirstLastInitials } from "../../utils/getInitials";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { api } from "@/lib/axios";
+import { useEffect } from "react";
 
 export default function ProfilePage() {
 
+    const fetchUser = useAuthStore((state) => state.fetchUser);
     const currentUser = useAuthStore((state) => state.user)
     const loading = useAuthStore((state) => state.loading);
-
     const logout = useAuthStore((s) => s.logout);
+    const router = useRouter();
+    let avatar = currentUser?.avatar?.url;
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [avatarLoading, setAvatarLoading] = useState<boolean>(false);
+
+    const [name, setName] = useState<string>(currentUser?.name || "");
+    const [email, setEmail] = useState<string>(currentUser?.email || "");
+    const [username, setUsername] = useState<string>("");
+    const [phone, setPhone] = useState<string>("");
+    const [bio, setBio] = useState<string>("");
+
+    const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        setName(currentUser?.name || "");
+        setEmail(currentUser?.email || "");
+        setPhone("");
+        setBio("");
+    }
+
+    const handleChangePassword = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        router.push("/user/change-password");
+    }
+
+    useEffect(() => {
+        if (currentUser) {
+            setName(currentUser.name || "");
+            setEmail(currentUser.email || "");
+        }
+    }, [currentUser]);
 
 
+
+
+
+    const handleAvatarChangeClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        fileInputRef.current?.click();
+    }
+
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        setAvatarLoading(true);
+        const file = e.target.files?.[0];
+        if (file) {
+            try {
+                const formData = new FormData();
+                formData.append('avatar', file);
+                const res = await api.patch("/user/update-user-avatar", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                await fetchUser();
+                console.log("Upload response:", res);
+            } catch (error) {
+                console.error("Error uploading avatar:", error);
+            }
+            finally {
+                setAvatarLoading(false);
+            }
+        }
+
+
+    }
 
     const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         await logout();
+        router.push("/");
+
     };
 
 
@@ -33,6 +103,8 @@ export default function ProfilePage() {
             </div>
         );
     }
+
+
     return (
         <>
 
@@ -57,7 +129,7 @@ export default function ProfilePage() {
                             </div>
 
                             <div className="flex flex-col gap-2 sm:flex-row">
-                                <button className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
+                                <button onClick={handleCancel} className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
                                     Cancel
                                 </button>
                                 <button className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
@@ -72,11 +144,24 @@ export default function ProfilePage() {
 
                                 <div className="relative">
                                     <div className="flex items-center gap-4">
-                                        <div className="relative h-16 w-16 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
+                                        <a href={avatar} target="_blank"><div className="relative h-16 w-16 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
                                             <div className="absolute inset-0 grid place-items-center text-lg font-bold text-slate-700">
-                                                RS
+                                                {avatar ? (avatarLoading ? (
+                                                    <div className="flex h-full w-full items-center justify-center">
+                                                        <div className="animate-spin rounded-full border-4 border-slate-400 border-t-transparent h-6 w-6"></div>
+                                                    </div>
+                                                ) : (
+                                                    <img
+                                                        src={avatar}
+                                                        alt="Avatar"
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                )) : (
+                                                    getFirstLastInitials(currentUser?.name)
+                                                )}
                                             </div>
                                         </div>
+                                        </a>
 
                                         <div className="min-w-0">
                                             <p className="truncate text-lg font-semibold text-slate-900">
@@ -105,8 +190,9 @@ export default function ProfilePage() {
                                     </div>
 
                                     <div className="mt-6 space-y-2">
-                                        <button className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
+                                        <button onClick={(e) => handleAvatarChangeClick(e)} className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
                                             Edit profile photo
+                                            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleAvatarChange(e)} />
                                         </button>
                                         <button className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
                                             View public profile
@@ -131,20 +217,18 @@ export default function ProfilePage() {
                                                 Update your name and contact details.
                                             </p>
                                         </div>
-
-                                        <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
-                                            Last updated: Today
-                                        </div>
                                     </div>
 
-                                    <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <form className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <div>
                                             <label className="mb-1.5 block text-xs font-semibold text-slate-700">
                                                 Full name
                                             </label>
                                             <input
                                                 type="text"
-                                                placeholder="Rishank Sharma"
+                                                placeholder="Full name"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
                                                 className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
                                             />
                                         </div>
@@ -155,7 +239,9 @@ export default function ProfilePage() {
                                             </label>
                                             <input
                                                 type="text"
-                                                placeholder="@rishank"
+                                                placeholder="@username"
+                                                value={username}
+                                                onChange={(e) => setUsername(e.target.value)}
                                                 className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
                                             />
                                         </div>
@@ -166,7 +252,9 @@ export default function ProfilePage() {
                                             </label>
                                             <input
                                                 type="email"
-                                                placeholder="rishank@example.com"
+                                                placeholder="email@example.com"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
                                                 className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
                                             />
                                         </div>
@@ -177,17 +265,21 @@ export default function ProfilePage() {
                                             </label>
                                             <input
                                                 type="tel"
-                                                placeholder="+91 98765 43210"
+                                                placeholder="+91 987XXX0028"
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
                                                 className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
                                             />
                                         </div>
-                                    </div>
+                                    </form>
 
                                     <div className="mt-4">
                                         <label className="mb-1.5 block text-xs font-semibold text-slate-700">
                                             Bio
                                         </label>
                                         <textarea
+                                            value={bio}
+                                            onChange={(e) => setBio(e.target.value)}
                                             placeholder="Tell people what kind of events you love..."
                                             className="min-h-[110px] w-full resize-none rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
                                         />
@@ -250,7 +342,7 @@ export default function ProfilePage() {
                                     </p>
 
                                     <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                        <button className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
+                                        <button onClick={handleChangePassword} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
                                             Change password
                                             <p className="mt-1 text-xs font-medium text-slate-600">
                                                 Update your password regularly.

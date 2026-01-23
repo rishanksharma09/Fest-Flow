@@ -54,6 +54,16 @@ export default function Navbar() {
           </Link>
         </div>}
 
+        {currentUser && <div className="hidden md:flex items-center gap-3">
+          <span className="text-sm font-medium text-slate-700">Hello, {currentUser.name}</span>
+          <Link
+            href="/user/profile"
+            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          >
+            Profile
+          </Link>
+        </div>}
+
         <button
           onClick={() => setOpen((v) => !v)}
           className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm md:hidden"
