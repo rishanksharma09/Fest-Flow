@@ -15,7 +15,6 @@ const societySchema = new mongoose.Schema({
 
     nickname: {
         type: String,
-        required: true,
         trim: true,
         minlength: 2,
     },

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function ProfilePage() {
 
@@ -289,30 +290,32 @@ export default function ProfilePage() {
                                 {/* Preferences */}
                                 <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                                     <h2 className="text-lg font-semibold text-slate-900">
-                                        Preferences
+                                        Options
                                     </h2>
                                     <p className="mt-1 text-sm text-slate-600">
                                         Customize how you discover events.
                                     </p>
 
                                     <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                        <Link href="/user/request-society">
+                                        <div  className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                                             <p className="text-sm font-semibold text-slate-900">
-                                                Notifications
+                                                Request a new society
                                             </p>
                                             <p className="mt-1 text-xs text-slate-600">
-                                                Get updates for saved events.
+                                                Add a new society.
                                             </p>
 
-                                            <div className="mt-4 flex items-center justify-between">
-                                                <span className="text-sm text-slate-600">
-                                                    Email alerts
-                                                </span>
+                                            <div className="mt-4 flex items-center justify-end">
+                    
                                                 <button className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
-                                                    Enabled
+                                                    request
                                                 </button>
                                             </div>
+                                            
                                         </div>
+                                        </Link>
+                                        
 
                                         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                                             <p className="text-sm font-semibold text-slate-900">
