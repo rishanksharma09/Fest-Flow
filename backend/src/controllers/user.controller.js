@@ -187,7 +187,7 @@ export const updateAccountDetails = asyncHandler(async (req, res) => {
 
   const updateFields = {};
 
-  
+
 
   const existingEmail = await User.findOne({ email });
   if (existingEmail) {
@@ -249,3 +249,9 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, user, "Avatar updated successfully"))
 
 })
+
+export const getRequestedSocieties = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+})
+

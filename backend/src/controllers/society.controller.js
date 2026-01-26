@@ -81,6 +81,12 @@ export const getSocietyInfo = asyncHandler(async (req, res) => {
         return res.status(200).json(new ApiResponse(200, societyInfo, "Society info fetched successfully"));
     })
 
+export const getAllSocieties = asyncHandler(async (req, res) => {
+    const societies = await Society.find().sort({ createdAt: -1 });
+
+    return res.status(200).json(new ApiResponse(200, societies, "All societies fetched successfully"));
+});
+
 export const updateSocietyInfo = asyncHandler(async (req, res) => {
     const { name, nickname, email, description } = req.body;
 
