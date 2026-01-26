@@ -17,7 +17,7 @@ export default function RequestSocietyPage() {
   const [societyName, setSocietyName] = useState("");
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
-  const [description, setDescription] = useState("");
+  const [about, setAbout] = useState("");
 
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export default function RequestSocietyPage() {
     formData.append("name", societyName);
     formData.append("nickname", nickname);
     formData.append("email", email);
-    formData.append("description", description);
+    formData.append("about", about);
     if (avatarFile) {
       formData.append("avatar", avatarFile);
     }
@@ -124,13 +124,14 @@ export default function RequestSocietyPage() {
                   />
                 </div>
 
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700">
-                    Description
+                    About
                   </label>
                   <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={about}
+                    onChange={(e) => setAbout(e.target.value)}
                     placeholder="Tell us what your society is about..."
                     rows={5}
                     className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"

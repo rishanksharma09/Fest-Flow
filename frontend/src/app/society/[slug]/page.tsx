@@ -41,7 +41,7 @@ export default function SocietyProfilePage() {
       admins: ["Rishank Sharma", "Aman Verma", "Priya Singh"],
       tags: ["Web", "DSA", "Hackathons", "Open Source"],
       avatarUrl: "",
-      posterUrl: "",
+      posterUrl: "/poster.jpg",
     }),
     []
   );
@@ -105,12 +105,12 @@ export default function SocietyProfilePage() {
               <div className="h-full w-full bg-gradient-to-br from-slate-100 via-white to-emerald-50" />
             )}
 
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
+            <div className="absolute  inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
           </div>
 
           {/* Header content */}
           <div className="p-6">
-            <div className="-mt-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex items-end gap-4">
                 {/* Avatar */}
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">

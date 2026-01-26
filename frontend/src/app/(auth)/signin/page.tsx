@@ -139,7 +139,7 @@ export default function SignInPage() {
                         disabled={loading}
                         className="w-full mt-8 rounded-xl bg-slate-900 px-4 py-3 text-sm  font-semibold text-white shadow-sm transition hover:bg-slate-800"
                       >
-                        Sign in
+                        {!loading ? "Sign in" : "Signing in..."}
                       </button>
                     </form>
 

@@ -26,6 +26,11 @@ const societySchema = new mongoose.Schema({
         lowercase: true,
         unique: true,
     },
+    website: {
+        type: String,
+        trim: true,
+        lowercase: true,
+    },
 
     slug: {
         type: String,
@@ -51,6 +56,14 @@ const societySchema = new mongoose.Schema({
 
     description: {
         type: String
+    },
+
+    about: {
+        type: String
+    },
+    activeMembers: {
+        type: Number,
+        default: 0
     },
 
     isApproved: {

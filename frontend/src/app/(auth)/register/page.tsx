@@ -10,6 +10,7 @@ export default function SignUpPage() {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [terms, setTerms] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -32,6 +33,7 @@ export default function SignUpPage() {
 
             const res = await api.post("/user/register", {
                 name,
+                username,
                 email,
                 password,
             });
@@ -107,7 +109,7 @@ export default function SignUpPage() {
 
                                             <div>
                                                 <label className="mb-1.5 block text-xs font-semibold text-slate-700">
-                                                    First name
+                                                    Name
                                                 </label>
                                                 <input
                                                     name="name"
@@ -116,6 +118,21 @@ export default function SignUpPage() {
                                                     value={name}
                                                     onChange={(e) => setName(e.target.value)}
                                                     placeholder="Rishank Sharma"
+                                                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+                                                    Username
+                                                </label>
+                                                <input
+                                                    name="username"
+                                                    type="text"
+                                                    required
+                                                    value={username}
+                                                    onChange={(e) => setUsername(e.target.value)}
+                                                    placeholder="rishanksharma09"
                                                     className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
                                                 />
                                             </div>
