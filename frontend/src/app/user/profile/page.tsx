@@ -319,18 +319,16 @@ export default function ProfilePage() {
 
                                         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                                             <p className="text-sm font-semibold text-slate-900">
-                                                Location
+                                                Requested Societies
                                             </p>
                                             <p className="mt-1 text-xs text-slate-600">
-                                                Used to recommend nearby events.
+                                                View your requested societies.
                                             </p>
 
-                                            <div className="mt-4 flex items-center justify-between">
-                                                <span className="text-sm text-slate-600">
-                                                    Default city
-                                                </span>
+                                            <div className="mt-4 flex items-center justify-end">
+                                               
                                                 <button className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
-                                                    Mumbai
+                                                    view
                                                 </button>
                                             </div>
                                         </div>

@@ -69,6 +69,18 @@ export const addSociety = asyncHandler(async (req, res) => {
 
 })
 
+export const getSocietyInfo = asyncHandler(async (req, res) => {
+        const {societySlug} = req.params;
+
+        const societyInfo = await Society.findOne({ slug: societySlug });
+
+        if (!societyInfo) {
+            throw new ApiError(404, "Society not found");
+        }
+
+        return res.status(200).json(new ApiResponse(200, societyInfo, "Society info fetched successfully"));
+    })
+
 export const updateSocietyInfo = asyncHandler(async (req, res) => {
     const { name, nickname, email, description } = req.body;
 
