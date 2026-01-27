@@ -5,6 +5,7 @@ import { capitaliseTitle } from "../utils/capitlaiseTitle";
 export type User = {
   _id: string;
   name: string;
+  username: string;
   email: string;
   avatar?: {
     url:string,

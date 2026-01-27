@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navbar from "../../components/navbar/Navbar"
 import { useState } from "react";
 import { api } from "../../../../lib/axios";
+import { useRouter } from "next/navigation";
 
 
 export default function SignUpPage() {
@@ -16,6 +17,7 @@ export default function SignUpPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -41,8 +43,12 @@ export default function SignUpPage() {
             setSuccess(res.data?.message || "Account created successfully!");
             setName("");
             setEmail("");
+            setUsername("");
             setPassword("");
             setTerms(false);
+            setTimeout(() => {
+                router.push("/signin");
+            }, 1500);
         } catch (err: any) {
             setError(
                 err?.response?.data?.message ||
@@ -61,7 +67,7 @@ export default function SignUpPage() {
                     <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-100 blur-3xl" />
                     <div className="absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-emerald-100 blur-3xl" />
 
-                    <div className="relative mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-4 py-10">
+                    <div className="relative mx-auto flex min-h-[calc(100vh-63px)] w-full max-w-6xl items-center justify-center px-4    ">
                         <div className="w-full max-w-md">
 
 

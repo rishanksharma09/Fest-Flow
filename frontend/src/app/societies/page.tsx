@@ -1,77 +1,123 @@
+"use client";
+
 import Link from "next/link";
 import SocietyCardUI from "./components/SocietyCard";
+import { api } from "@/lib/axios";
+import { useEffect,useState } from "react";
+
 
 type SocietyCard = {
+
   name: string;
   nickname: string;
-  category: string;
-  followers: string;
-  events: number;
-  tagline: string;
-  location: string;
+  slug: string;
+  description: string;
+  avatar: {url:string, publicId:string} | null;
+  poster: {url:string, publicId:string} | null;
 };
 
-const societies: SocietyCard[] = [
-  {
-    name: "Tech Innovators Club",
-    nickname: "techclub",
-    category: "Technology",
-    followers: "2.3k",
-    events: 18,
-    tagline: "Hackathons, workshops & community meetups.",
-    location: "Mumbai",
-  },
-  {
-    name: "Design & Creators Guild",
-    nickname: "designguild",
-    category: "Design",
-    followers: "1.1k",
-    events: 9,
-    tagline: "UI/UX jams, design talks & portfolio reviews.",
-    location: "Delhi",
-  },
-  {
-    name: "Cultural & Arts Society",
-    nickname: "culturehub",
-    category: "Culture",
-    followers: "3.9k",
-    events: 24,
-    tagline: "Performances, fests, and creative showcases.",
-    location: "Pune",
-  },
-  {
-    name: "Sports & Fitness Club",
-    nickname: "fitcrew",
-    category: "Sports",
-    followers: "980",
-    events: 12,
-    tagline: "Tournaments, training camps & challenges.",
-    location: "Bengaluru",
-  },
-  {
-    name: "Entrepreneurship Cell",
-    nickname: "ecell",
-    category: "Business",
-    followers: "4.7k",
-    events: 16,
-    tagline: "Pitch nights, startup talks, and mentorship.",
-    location: "Mumbai",
-  },
-  {
-    name: "Comedy & Open Mic",
-    nickname: "micnight",
-    category: "Comedy",
-    followers: "740",
-    events: 7,
-    tagline: "Standups, open mics and fun nights.",
-    location: "Online",
-  },
-];
+
+
+
+
+
+// const societies: SocietyCard[] = [
+//   {
+//     name: "Tech Innovators Club",
+//     nickname: "techclub",
+//     category: "Technology",
+//     followers: "2.3k",
+//     events: 18,
+//     tagline: "Hackathons, workshops & community meetups.",
+//     location: "Mumbai",
+//   },
+//   {
+//     name: "Design & Creators Guild",
+//     nickname: "designguild",
+//     category: "Design",
+//     followers: "1.1k",
+//     events: 9,
+//     tagline: "UI/UX jams, design talks & portfolio reviews.",
+//     location: "Delhi",
+//   },
+//   {
+//     name: "Cultural & Arts Society",
+//     nickname: "culturehub",
+//     category: "Culture",
+//     followers: "3.9k",
+//     events: 24,
+//     tagline: "Performances, fests, and creative showcases.",
+//     location: "Pune",
+//   },
+//   {
+//     name: "Sports & Fitness Club",
+//     nickname: "fitcrew",
+//     category: "Sports",
+//     followers: "980",
+//     events: 12,
+//     tagline: "Tournaments, training camps & challenges.",
+//     location: "Bengaluru",
+//   },
+//   {
+//     name: "Entrepreneurship Cell",
+//     nickname: "ecell",
+//     category: "Business",
+//     followers: "4.7k",
+//     events: 16,
+//     tagline: "Pitch nights, startup talks, and mentorship.",
+//     location: "Mumbai",
+//   },
+//   {
+//     name: "Comedy & Open Mic",
+//     nickname: "micnight",
+//     category: "Comedy",
+//     followers: "740",
+//     events: 7,
+//     tagline: "Standups, open mics and fun nights.",
+//     location: "Online",
+//   },
+// ];
 
 
 
 
 export default function SocietiesPage() {
+
+  const [societies, setSocieties] = useState<SocietyCard[]>([]);
+
+
+  useEffect(() => {
+  // Fetch societies from backend API
+  const fetchSocieties = async () => {
+    try {
+      const response = await api.get("/society/get-all-societies");
+
+      const res = response.data.data;
+      
+      setSocieties(res);
+      console.log("Fetched societies:", societies);
+      
+    } catch (error) {
+      console.error("Error fetching societies:", error);
+    }
+  };
+
+  fetchSocieties();
+}, [societies]);
+
+ const demoInfo = [{"avatar": {
+                "publicId": "",
+                "url": ""
+            },
+            "poster": {
+                "publicId": "",
+                "url": ""
+            },
+            "_id": "696fb4d8839e4bea3fcd1e8d",
+            "name": "creative computing society",
+            "nickname": "ccs",
+            "description": "updated desc2"
+          }]
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <section className="relative overflow-hidden">
@@ -94,22 +140,11 @@ export default function SocietiesPage() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Link
-                href="/society/request"
-                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
-              >
-                Request Society
-              </Link>
-
-              <button className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
-                Create Society
-              </button>
-            </div>
+            
           </div>
 
           {/* Controls */}
-          <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="my-15 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_220px_160px]">
               {/* Search */}
               <div className="relative">

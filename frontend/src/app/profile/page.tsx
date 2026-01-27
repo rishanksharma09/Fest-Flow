@@ -1,14 +1,14 @@
 "use client"
-import { useAuthStore } from "../../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { useRouter } from "next/navigation";
-import { getFirstLastInitials } from "../../utils/getInitials";
+import { getFirstLastInitials } from "../utils/getInitials";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import { useEffect } from "react";
 import Link from "next/link";
 
-export default function ProfilePage() {
+export default function SelfProfile() {
 
     const fetchUser = useAuthStore((state) => state.fetchUser);
     const currentUser = useAuthStore((state) => state.user)
@@ -21,7 +21,7 @@ export default function ProfilePage() {
 
     const [name, setName] = useState<string>(currentUser?.name || "");
     const [email, setEmail] = useState<string>(currentUser?.email || "");
-    const [username, setUsername] = useState<string>("");
+    const [username, setUsername] = useState<string>(currentUser?.username || "");
     const [phone, setPhone] = useState<string>("");
     const [bio, setBio] = useState<string>("");
 
@@ -33,19 +33,14 @@ export default function ProfilePage() {
         setBio("");
     }
 
-    const handleChangePassword = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        router.push("/user/change-password");
-    }
-
+    
     useEffect(() => {
         if (currentUser) {
             setName(currentUser.name || "");
             setEmail(currentUser.email || "");
+            setUsername(currentUser.username || "");
         }
     }, [currentUser]);
-
-
 
 
 
@@ -297,25 +292,25 @@ export default function ProfilePage() {
                                     </p>
 
                                     <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                        <Link href="/user/request-society">
-                                        <div  className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                                            <p className="text-sm font-semibold text-slate-900">
-                                                Request a new society
-                                            </p>
-                                            <p className="mt-1 text-xs text-slate-600">
-                                                Add a new society.
-                                            </p>
+                                        <Link href="/profile/request-society">
+                                            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                                <p className="text-sm font-semibold text-slate-900">
+                                                    Request a new society
+                                                </p>
+                                                <p className="mt-1 text-xs text-slate-600">
+                                                    Add a new society.
+                                                </p>
 
-                                            <div className="mt-4 flex items-center justify-end">
-                    
-                                                <button className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
-                                                    request
-                                                </button>
+                                                <div className="mt-4 flex items-center justify-end">
+
+                                                    <button className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
+                                                        request
+                                                    </button>
+                                                </div>
+
                                             </div>
-                                            
-                                        </div>
                                         </Link>
-                                        
+
 
                                         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                                             <p className="text-sm font-semibold text-slate-900">
@@ -326,7 +321,7 @@ export default function ProfilePage() {
                                             </p>
 
                                             <div className="mt-4 flex items-center justify-end">
-                                               
+
                                                 <button className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
                                                     view
                                                 </button>
@@ -343,12 +338,14 @@ export default function ProfilePage() {
                                     </p>
 
                                     <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                        <button onClick={handleChangePassword} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
-                                            Change password
-                                            <p className="mt-1 text-xs font-medium text-slate-600">
-                                                Update your password regularly.
-                                            </p>
-                                        </button>
+                                        <Link href="/profile/change-password"> 
+                                            <button className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
+                                                Change password
+                                                <p className="mt-1 text-xs font-medium text-slate-600">
+                                                    Update your password regularly.
+                                                </p>
+                                            </button>
+                                        </Link>
 
                                         <button className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
                                             Manage sessions

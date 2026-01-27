@@ -2,7 +2,7 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 
 import { verifyJwt } from "../middlewares/verifyJwt.middleware.js";
-import { addSociety, updateSocietyAvatar, updateSocietyInfo, updateSocietyPoster } from "../controllers/society.controller.js";
+import { addSociety, getAllSocieties, getSocietyInfo, updateSocietyAvatar, updateSocietyInfo, updateSocietyPoster } from "../controllers/society.controller.js";
 import { verifySocietyAdmin } from "../middlewares/verifySocietyAdmin.js";
 
 export const societyRouter = Router()
@@ -15,6 +15,8 @@ societyRouter.route("/add").post(verifyJwt,upload.fields([
     { name: 'poster', maxCount: 1 }
 ]
 ), addSociety)
+
+societyRouter.route("/get-all-societies").get(getAllSocieties)
 
 
 // Secured and admin verified

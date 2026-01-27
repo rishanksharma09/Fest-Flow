@@ -6,6 +6,7 @@ import { useState } from "react";
 import { api } from "../../../../lib/axios"
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/useAuthStore";
+import { PasswordInput } from "../../components/ui/PasswordInput";
 
 export default function SignInPage() {
 
@@ -15,6 +16,7 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,8 +55,8 @@ export default function SignInPage() {
           <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-100 blur-3xl" />
           <div className="absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-emerald-100 blur-3xl" />
 
-          <div className="relative mx-auto flex w-full max-w-6xl items-center justify-center px-4 py-10">
-            <div className="w-full max-w-md">
+          <div className="relative min-h-[calc(100vh-62px)] mx-auto flex w-full max-w-6xl items-center justify-center px-4 py-10">
+            <div className="w-full max-w-md  ">
 
 
               <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
@@ -112,10 +114,10 @@ export default function SignInPage() {
                       </div>
 
                       <div>
-                        <div className="mb-1.5 flex items-center justify-between">
-                          <label className="block text-xs font-semibold text-slate-700">
-                            Password
-                          </label>
+                        <div className="mb-1.5 w-full flex-col flex items-end ">
+                          <div className="w-full">
+                          <PasswordInput label="Password" placeholder="********" value={password} setValue={setPassword} show={showPassword} setShow={setShowPassword} />
+                          </div>
                           <a
                             href="#"
                             className="text-xs font-semibold text-slate-600 hover:text-slate-900"
@@ -123,13 +125,7 @@ export default function SignInPage() {
                             Forgot?
                           </a>
                         </div>
-                        <input
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-slate-100"
-                        />
+                        
                       </div>
 
 

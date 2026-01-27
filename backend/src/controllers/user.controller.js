@@ -55,6 +55,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   const createdUser = await User.create({
     name,
     email,
+    username,
     password,
     avatar: cloudinaryAvatarResponse,
     provider: "LOCAL",
