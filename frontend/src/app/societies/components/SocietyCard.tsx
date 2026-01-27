@@ -16,7 +16,6 @@ function SocietyCardUI({ society }: { society: SocietyCard }) {
   return (
     <article className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow">
       {/* Top banner */}
-
       
       <div className="relative h-28 w-full bg-gradient-to-br from-slate-100 to-slate-50">
 

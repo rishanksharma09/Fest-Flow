@@ -18,7 +18,7 @@ societyRouter.route("/add").post(verifyJwt,upload.fields([
 
 societyRouter.route("/get-all-societies").get(getAllSocieties)
 
-
+societyRouter.route("/get-society-info/:societySlug").get(getSocietyInfo)
 // Secured and admin verified
 
 societyRouter.route("/:societySlug/update-society-info").patch(verifyJwt,verifySocietyAdmin,updateSocietyInfo)

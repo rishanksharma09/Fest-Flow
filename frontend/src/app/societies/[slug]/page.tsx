@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { api } from "@/lib/axios";
+import { useParams } from "next/navigation";
+import { getFirstLastInitials } from "../../utils/getInitials";
 import {
   CalendarDays,
   ChevronLeft,
@@ -12,15 +15,39 @@ import {
   Users,
 } from "lucide-react";
 
-function getInitials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((w) => w[0].toUpperCase())
-    .slice(0, 2)
-    .join("");
-}
+export type Society = {
+  _id: string;
+
+  name: string;
+  email: string;
+  activeMembers: number;
+  isApproved: boolean;
+
+  admins: string[]; // ObjectId → string
+
+  avatar?: {
+    publicId: string;
+    url: string;
+  } | null;
+
+  poster?: {
+    publicId: string;
+    url: string;
+  } | null;
+
+  nickname?: string | null;
+  website?: string | null;
+  slug?: string | null;
+
+  createdBy?: string | null;
+
+  description?: string | null;
+  about?: string | null;
+
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 
 function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -28,23 +55,35 @@ function cn(...classes: Array<string | false | null | undefined>) {
 
 export default function SocietyProfilePage() {
   // UI-only demo data
-  const society = useMemo(
-    () => ({
-      name: "Coding Club",
-      nickname: "CC",
-      description:
-        "A community of builders who love web dev, DSA, hackathons, and open-source. We conduct weekly sessions, contests and collaborate on real projects.",
-      email: "codingclub@college.edu",
-      location: "Main Campus",
-      website: "https://example.com",
-      membersCount: 420,
-      admins: ["Rishank Sharma", "Aman Verma", "Priya Singh"],
-      tags: ["Web", "DSA", "Hackathons", "Open Source"],
-      avatarUrl: "",
-      posterUrl: "/poster.jpg",
-    }),
-    []
-  );
+  // "const society ={
+  //     name: "Coding Club",
+  //     nickname: "CC",
+  //     description:
+  //       "A community of builders who love web dev, DSA, hackathons, and open-source. We conduct weekly sessions, contests and collaborate on real projects.",
+  //     email: "codingclub@college.edu",
+  //     location: "Main Campus",
+  //     website: "https://example.com",
+  //     membersCount: 420,
+  //     admins: ["Rishank Sharma", "Aman Verma", "Priya Singh"],
+  //     tags: ["Web", "DSA", "Hackathons", "Open Source"],
+  //     avatarUrl: "",
+  //     posterUrl: "/poster.jpg",
+  //   }"
+   
+  const { slug } = useParams();
+  const [society, setSociety] = useState<Society | null>(null);
+
+  useEffect(() => {
+    const fetchSociety = async () => {
+      try {
+        const response = await api.get(`/society/get-society-info/${slug}`);
+        setSociety(response.data.data);
+      } catch (error) {
+        console.error("Error fetching society:", error);
+      }}
+
+      fetchSociety();
+  }, []);
 
   const [joined, setJoined] = useState(false);
 
@@ -61,7 +100,7 @@ export default function SocietyProfilePage() {
         {/* Top Bar */}
         <div className="mb-6 flex items-center justify-between gap-3">
           <Link
-            href="/society"
+            href="/societies"
             className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
           >
             <ChevronLeft size={18} />
@@ -95,17 +134,16 @@ export default function SocietyProfilePage() {
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           {/* Poster */}
           <div className="relative h-44 w-full">
-            {society.posterUrl ? (
+            {society?.poster?.url ? (
               <img
-                src={society.posterUrl}
+                src={society.poster.url}
                 alt="poster"
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-slate-100 via-white to-emerald-50" />
+              <div className="h-full w-full bg-gray-200" />
             )}
 
-            <div className="absolute  inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
           </div>
 
           {/* Header content */}
@@ -114,25 +152,25 @@ export default function SocietyProfilePage() {
               <div className="flex items-end gap-4">
                 {/* Avatar */}
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                  {society.avatarUrl ? (
+                  {society?.avatar?.url ? (
                     <img
-                      src={society.avatarUrl}
+                      src={society.avatar.url}
                       alt="avatar"
                       className="h-full w-full object-cover"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-slate-900 text-xl font-bold text-white">
-                      {getInitials(society.name)}
+                      {getFirstLastInitials(society?.name || "")}
                     </div>
                   )}
                 </div>
 
                 <div>
                   <h1 className="text-2xl font-bold text-slate-900">
-                    {society.name}
+                    {society?.name}
                   </h1>
                   <p className="mt-1 text-sm font-medium text-slate-500">
-                    {society.nickname}
+                    {society?.nickname}
                   </p>
                 </div>
               </div>
@@ -143,11 +181,11 @@ export default function SocietyProfilePage() {
 
             {/* Description */}
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-600">
-              {society.description}
+              {society?.description}
             </p>
 
             {/* Tags */}
-            <div className="mt-4 flex flex-wrap gap-2">
+            {/* <div className="mt-4 flex flex-wrap gap-2">
               {society.tags.slice(0, 6).map((t) => (
                 <span
                   key={t}
@@ -156,7 +194,7 @@ export default function SocietyProfilePage() {
                   {t}
                 </span>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -168,9 +206,7 @@ export default function SocietyProfilePage() {
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <h2 className="text-base font-semibold text-slate-900">About</h2>
               <p className="mt-2 text-sm text-slate-600">
-                We host weekly learning sessions, project-building sprints, and
-                community events. Join us to learn, build, and grow with other
-                passionate students.
+                {society?.about || "No additional information provided."}
               </p>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -180,7 +216,7 @@ export default function SocietyProfilePage() {
                     Members
                   </div>
                   <p className="mt-1 text-sm text-slate-600">
-                    {society.membersCount} active members
+                    {society?.activeMembers} active members
                   </p>
                 </div>
 
@@ -242,17 +278,17 @@ export default function SocietyProfilePage() {
               <div className="mt-4 space-y-3 text-sm text-slate-700">
                 <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
                   <Mail size={16} className="text-slate-500" />
-                  <span className="truncate">{society.email}</span>
+                  <span className="truncate">{society?.email}</span>
                 </div>
 
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                  <MapPin size={16} className="text-slate-500" />
-                  <span className="truncate">{society.location}</span>
-                </div>
+                  {/* <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                    <MapPin size={16} className="text-slate-500" />
+                    <span className="truncate">{society?.location}</span>
+                  </div> */}
 
                 <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
                   <Globe size={16} className="text-slate-500" />
-                  <span className="truncate">{society.website}</span>
+                  <span className="truncate">{society?.website}</span>
                 </div>
               </div>
 
@@ -276,14 +312,14 @@ export default function SocietyProfilePage() {
               </div>
 
               <div className="mt-4 space-y-3">
-                {society.admins.map((a) => (
+                {/* {society?.admins.map((a) => (
                   <div
                     key={a}
                     className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">
-                        {getInitials(a)}
+                        {getfrInitials(a)}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-900">
@@ -300,7 +336,7 @@ export default function SocietyProfilePage() {
                       View
                     </button>
                   </div>
-                ))}
+                ))} */}
               </div>
             </div>
 
