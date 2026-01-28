@@ -70,13 +70,9 @@ const societySchema = new mongoose.Schema({
         type: Boolean,
         default:false
     },
+}, { timestamps: true });
 
-    admins: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    }]
 
-})
 
 
 societySchema.pre('save', async function () {

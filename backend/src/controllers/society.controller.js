@@ -4,6 +4,9 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { deleteImageOnCloudinary, uploadImageOnCloudinary } from "../utils/cloudinary.js";
 import ApiResponse from "../utils/apiResponse.js";
 import fs from "fs/promises"
+import { Admin } from "../models/admins.model.js";
+import { pipeline } from "stream";
+import { userInfo } from "os";
 
 export const addSociety = asyncHandler(async (req, res) => {
 
@@ -61,6 +64,17 @@ export const addSociety = asyncHandler(async (req, res) => {
         avatar: avatarResponse,
         poster: posterResponse
     })
+    const admins = await Admin.create({
+        user: req.user._id,
+        society: society._id,
+        role: "EB",
+        permissions: {
+            manageEvents: true,
+            manageMembers: true,
+            manageContent: true,
+            manageSettings: true,
+        }
+    })
 
     return res
         .status(201)
@@ -70,25 +84,63 @@ export const addSociety = asyncHandler(async (req, res) => {
 })
 
 export const getSocietyInfo = asyncHandler(async (req, res) => {
-        const {societySlug} = req.params;
+    const { societySlug } = req.params;
 
-        const societyInfo = await Society.findOne({ slug: societySlug });
-
-        if (!societyInfo) {
-            throw new ApiError(404, "Society not found");
+    // const societyInfo = await Society.findOne({ slug: societySlug });
+    const societyInfo = await Society.aggregate([
+        { $match: { slug: societySlug } },
+        {
+            $lookup: {
+                from: "admins",
+                localField: "_id",
+                foreignField: "society",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "user",
+                            foreignField: "_id",
+                            pipeline: [{
+                                $project: {
+                                    name: 1,
+                                    email: 1,
+                                    avatar: 1
+                                }
+                            }],
+                            as: "userInfo"
+                        }
+                    },
+                    {
+                        $unwind: "$userInfo"
+                    },
+                    {$project:{
+                        role:1,
+                        permissions:1,
+                        userInfo:1
+                    }}
+                    
+                ],
+                as: "adminsInfo"
+            }
         }
+        ])
 
-        return res.status(200).json(new ApiResponse(200, societyInfo, "Society info fetched successfully"));
-    })
+
+    if (!societyInfo) {
+        throw new ApiError(404, "Society not found");
+    }
+
+    return res.status(200).json(new ApiResponse(200, societyInfo, "Society info fetched successfully"));
+})
 
 export const getAllSocieties = asyncHandler(async (req, res) => {
-  const societies = await Society.find()
-    .select("name nickname description avatar poster slug")
-    .sort({ createdAt: -1 });
+    const societies = await Society.find()
+        .select("name nickname description avatar poster slug")
+        .sort({ createdAt: -1 });
 
-  return res.status(200).json(
-    new ApiResponse(200, societies, "All societies fetched successfully")
-  );
+    return res.status(200).json(
+        new ApiResponse(200, societies, "All societies fetched successfully")
+    );
 });
 
 

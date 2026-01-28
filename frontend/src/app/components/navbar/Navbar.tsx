@@ -33,8 +33,8 @@ export default function Navbar() {
           <Link className="text-sm font-medium text-slate-700 hover:text-slate-900" href="#">
             Contact
           </Link>
-          <Link className="text-sm font-medium text-slate-700 hover:text-slate-900" href="#">
-            Create Event
+          <Link href="/societies" className="text-sm font-medium text-slate-700 hover:text-slate-900" >
+            Societies
           </Link>
         </nav>
 
@@ -57,7 +57,7 @@ export default function Navbar() {
         {currentUser && <div className="hidden md:flex items-center gap-3">
           <span className="text-sm font-medium text-slate-700">Hello, {currentUser.name}</span>
           <Link
-            href="/user/profile"
+            href="/profile"
             className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
           >
             Profile

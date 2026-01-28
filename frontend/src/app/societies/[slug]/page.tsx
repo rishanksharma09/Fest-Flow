@@ -14,6 +14,12 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
+import { userInfo } from "os";
+
+export type AdminsInfo = {role: string,
+   permissions: {manageEvents: boolean, manageMembers: boolean, manageContent: boolean, manageSettings: boolean},
+   userInfo:{_id: string, name: string, email: string, avatar: {publicId: string, url: string} | null};
+}
 
 export type Society = {
   _id: string;
@@ -23,7 +29,7 @@ export type Society = {
   activeMembers: number;
   isApproved: boolean;
 
-  admins: string[]; // ObjectId → string
+  adminsInfo?: AdminsInfo[]
 
   avatar?: {
     publicId: string;
@@ -77,7 +83,8 @@ export default function SocietyProfilePage() {
     const fetchSociety = async () => {
       try {
         const response = await api.get(`/society/get-society-info/${slug}`);
-        setSociety(response.data.data);
+        setSociety(response.data.data[0]);
+        console.log("Fetched society:", response.data.data[0]);
       } catch (error) {
         console.error("Error fetching society:", error);
       }}
@@ -288,7 +295,7 @@ export default function SocietyProfilePage() {
 
                 <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
                   <Globe size={16} className="text-slate-500" />
-                  <span className="truncate">{society?.website}</span>
+                  <span className="truncate">{society?.website || "no website"}</span>
                 </div>
               </div>
 
@@ -312,18 +319,26 @@ export default function SocietyProfilePage() {
               </div>
 
               <div className="mt-4 space-y-3">
-                {/* {society?.admins.map((a) => (
+                {society?.adminsInfo?.map((a, index) => (
                   <div
-                    key={a}
+                    key={index}
                     className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">
-                        {getfrInitials(a)}
+                        {a.userInfo.avatar?.url ? (
+                          <img
+                            src={a.userInfo.avatar.url}
+                            alt="Admin Avatar"
+                            className="h-full w-full rounded-full object-cover"
+                          />
+                        ) : (
+                          getFirstLastInitials(a.userInfo.name)
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-900">
-                          {a}
+                          {a.userInfo.name}
                         </p>
                         <p className="text-xs text-slate-500">Admin</p>
                       </div>
@@ -336,7 +351,7 @@ export default function SocietyProfilePage() {
                       View
                     </button>
                   </div>
-                ))} */}
+                ))}
               </div>
             </div>
 
