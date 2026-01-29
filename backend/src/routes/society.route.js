@@ -2,7 +2,7 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 
 import { verifyJwt } from "../middlewares/verifyJwt.middleware.js";
-import { addSociety, getAllSocieties, getSocietyInfo, updateSocietyAvatar, updateSocietyInfo, updateSocietyPoster } from "../controllers/society.controller.js";
+import { addAdminToSociety, addSociety, getAllSocieties, getSocietyInfo, updateSocietyAvatar, updateSocietyInfo, updateSocietyPoster } from "../controllers/society.controller.js";
 import { verifySocietyAdmin } from "../middlewares/verifySocietyAdmin.js";
 
 export const societyRouter = Router()
@@ -26,3 +26,5 @@ societyRouter.route("/:societySlug/update-society-info").patch(verifyJwt,verifyS
 societyRouter.route("/:societySlug/update-society-avatar").patch(verifyJwt,verifySocietyAdmin,updateSocietyAvatar)
 
 societyRouter.route("/:societySlug/update-society-poster").patch(verifyJwt,verifySocietyAdmin,updateSocietyPoster)
+
+societyRouter.route("/:societySlug/add-admin").post(addAdminToSociety)

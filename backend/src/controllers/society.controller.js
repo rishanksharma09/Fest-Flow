@@ -5,8 +5,7 @@ import { deleteImageOnCloudinary, uploadImageOnCloudinary } from "../utils/cloud
 import ApiResponse from "../utils/apiResponse.js";
 import fs from "fs/promises"
 import { Admin } from "../models/admins.model.js";
-import { pipeline } from "stream";
-import { userInfo } from "os";
+import { User } from "../models/user.model.js";
 
 export const addSociety = asyncHandler(async (req, res) => {
 
@@ -103,6 +102,7 @@ export const getSocietyInfo = asyncHandler(async (req, res) => {
                             pipeline: [{
                                 $project: {
                                     name: 1,
+                                    username: 1,
                                     email: 1,
                                     avatar: 1
                                 }
@@ -113,17 +113,19 @@ export const getSocietyInfo = asyncHandler(async (req, res) => {
                     {
                         $unwind: "$userInfo"
                     },
-                    {$project:{
-                        role:1,
-                        permissions:1,
-                        userInfo:1
-                    }}
-                    
+                    {
+                        $project: {
+                            role: 1,
+                            permissions: 1,
+                            userInfo: 1
+                        }
+                    }
+
                 ],
                 as: "adminsInfo"
             }
         }
-        ])
+    ])
 
 
     if (!societyInfo) {
@@ -233,5 +235,30 @@ export const updateSocietyPoster = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, societyInfo, "Poster updated successfully"))
 
+})
+
+export const addAdminToSociety = asyncHandler(async (req, res) => {
+
+    const { email, role, permissions } = req.body;
+    const { societySlug } = req.params;
+
+    const societyId = await Society.findOne({ slug: societySlug }).select("_id");
+    if (!societyId) {
+        throw new ApiError(404, "Society not found");
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new ApiError(404, "User with this email does not exist");
+    }
+
+
+    const admin = await Admin.create({
+        user: user._id,
+        society: societyId,
+        role,
+        permissions
+    });
+    return res.status(200).json(new ApiResponse(200, admin, "admin added successfully"))
 })
 

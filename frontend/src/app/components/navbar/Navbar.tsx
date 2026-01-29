@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 
 export default function Navbar() {
@@ -9,6 +9,7 @@ export default function Navbar() {
   const currentUser = useAuthStore((state) => state.user)
   const loading = useAuthStore((s) => s.loading);
   console.log("navbar",currentUser)
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur">

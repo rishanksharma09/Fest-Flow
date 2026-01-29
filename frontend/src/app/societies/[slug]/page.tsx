@@ -14,11 +14,11 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
-import { userInfo } from "os";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export type AdminsInfo = {role: string,
    permissions: {manageEvents: boolean, manageMembers: boolean, manageContent: boolean, manageSettings: boolean},
-   userInfo:{_id: string, name: string, email: string, avatar: {publicId: string, url: string} | null};
+   userInfo:{_id: string, name: string, username: string, email: string, avatar: {publicId: string, url: string} | null};
 }
 
 export type Society = {
@@ -75,22 +75,43 @@ export default function SocietyProfilePage() {
   //     avatarUrl: "",
   //     posterUrl: "/poster.jpg",
   //   }"
+
+  const currentUser = useAuthStore((state) => state.user);
    
   const { slug } = useParams();
   const [society, setSociety] = useState<Society | null>(null);
-
+  const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
+  const [currentAdmin, setCurrentAdmin] = useState<AdminsInfo | null>(null);
+ 
   useEffect(() => {
     const fetchSociety = async () => {
       try {
         const response = await api.get(`/society/get-society-info/${slug}`);
         setSociety(response.data.data[0]);
         console.log("Fetched society:", response.data.data[0]);
+       
       } catch (error) {
         console.error("Error fetching society:", error);
       }}
 
       fetchSociety();
   }, []);
+
+  useEffect(() => {
+  if (!society || !currentUser) return;
+
+ 
+  const currentAdmin = society?.adminsInfo?.find(
+    (admin: AdminsInfo) =>
+      admin.userInfo.username === currentUser?.username
+  );
+  setCurrentAdmin(currentAdmin || null);
+
+
+  setIsCurrentUserAdmin(!!currentAdmin);
+  console.log("currentUser:", currentUser);
+  console.log("Is current user admin:", !!currentAdmin);
+}, [society, currentUser]);
 
   const [joined, setJoined] = useState(false);
 
@@ -310,8 +331,13 @@ export default function SocietyProfilePage() {
             {/* Admins */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-slate-900">
+                <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
                   Admins
+                  {isCurrentUserAdmin && currentAdmin?.permissions.manageMembers && <Link href={`/societies/${society?.slug}/add-admin`}  className="ml-2">
+                    <span>
+                      +
+                    </span>
+                  </Link>}
                 </h2>
                 <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-slate-100">
                   <Crown size={16} className="text-slate-700" />
@@ -340,7 +366,9 @@ export default function SocietyProfilePage() {
                         <p className="text-sm font-semibold text-slate-900">
                           {a.userInfo.name}
                         </p>
-                        <p className="text-xs text-slate-500">Admin</p>
+                        <p className="text-xs text-slate-500">{a.role}</p>
+                        <p className="text-xs text-slate-400">{a.userInfo.email}</p>
+                        
                       </div>
                     </div>
 
