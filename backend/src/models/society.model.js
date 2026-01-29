@@ -66,14 +66,12 @@ const societySchema = new mongoose.Schema({
         default: 0
     },
 
-    isApproved: {
-        type: Boolean,
-        default:false
+    status: {
+        type: String,
+        enum: ["PENDING", "APPROVED", "REJECTED"],
+        default: "PENDING"
     },
 }, { timestamps: true });
-
-
-
 
 societySchema.pre('save', async function () {
     if(this.slug){
@@ -92,10 +90,5 @@ societySchema.pre('save', async function () {
     return;
 
 })
-
-
-
-
-
 
 export const Society = new mongoose.model("Society", societySchema)

@@ -311,7 +311,8 @@ export default function SelfProfile() {
                                             </div>
                                         </Link>
 
-
+                                        <Link href="/profile/requested-societies">
+                                            
                                         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                                             <p className="text-sm font-semibold text-slate-900">
                                                 Requested Societies
@@ -327,6 +328,7 @@ export default function SelfProfile() {
                                                 </button>
                                             </div>
                                         </div>
+                                        </Link>
                                     </div>
                                 </section>
 

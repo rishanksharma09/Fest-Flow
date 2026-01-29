@@ -27,4 +27,4 @@ societyRouter.route("/:societySlug/update-society-avatar").patch(verifyJwt,verif
 
 societyRouter.route("/:societySlug/update-society-poster").patch(verifyJwt,verifySocietyAdmin,updateSocietyPoster)
 
-societyRouter.route("/:societySlug/add-admin").post(addAdminToSociety)
+societyRouter.route("/:societySlug/add-admin").post(verifyJwt,verifySocietyAdmin, addAdminToSociety)

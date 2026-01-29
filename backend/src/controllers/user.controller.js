@@ -4,6 +4,7 @@ import ApiResponse from "../utils/apiResponse.js";
 import { User } from "../models/user.model.js";
 import { deleteImageOnCloudinary, uploadImageOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken"
+import { Society } from "../models/society.model.js";
 
 const options = {
   httpOnly: true,
@@ -254,5 +255,20 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
 export const getRequestedSocieties = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
+  const requestedSocieties = await Society.find({ createdBy: userId })
+    .select("name nickname email about avatar poster slug status createdAt")
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json(new ApiResponse(200, requestedSocieties, "Requested societies fetched successfully"))
+
+})
+
+export const deleteRequestedSociety = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { societyId } = req.params;
+  const society = await Society.deleteOne({ _id: societyId, createdBy: userId });
+ 
+
+  return res.status(200).json(new ApiResponse(200, {}, "Requested society deleted successfully"))   
 })
 
