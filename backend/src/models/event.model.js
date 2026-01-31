@@ -1,20 +1,7 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
+import { Society } from "./society.model.js";
 
-const cloudinaryAssetSchema = new mongoose.Schema(
-  {
-    url: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    publicId: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-  },
-  { _id: false }
-);
 
 const eventSchema = new mongoose.Schema(
   {
@@ -29,6 +16,10 @@ const eventSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    slug:{
+      type:String,
+      trim:true
+    },
 
     startAt: {
       type: Date,
@@ -41,8 +32,9 @@ const eventSchema = new mongoose.Schema(
     },
 
     location: {
-      type: Object,
-      default: {},
+        type: String,
+        required: true,
+      
     },
 
     capacity: {
@@ -51,13 +43,6 @@ const eventSchema = new mongoose.Schema(
       min: 0,
     },
 
-    categories: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
-
     fee: {
       type: Number,
       default: 0,
@@ -65,13 +50,18 @@ const eventSchema = new mongoose.Schema(
     },
 
     poster: {
-      type: cloudinaryAssetSchema,
-      default: null,
+      url: {
+        type: String,
+        trim: true,
+      },
+      publicId: {
+        type: String,
+        trim: true,
+      }
     },
-
-    ui: {
+    registrationLink: {
       type: String,
-      default: null,
+      trim: true,
     },
 
     registrationDeadline: {
@@ -81,29 +71,33 @@ const eventSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["DRAFT", "PUBLISHED", "CANCELLED", "COMPLETED"],
+      enum: ["DRAFT", "PUBLISHED", "COMPLETED"],
       default: "DRAFT",
     },
-
-    cancelationReason: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
     description: {
       type: String,
       default: "",
       trim: true,
     },
-
-    visibility: {
-      type: String,
-      enum: ["PUBLIC", "ADMINS_ONLY"],
-      default: "PUBLIC",
-    },
   },
   { timestamps: true }
 );
+
+eventSchema.pre('save', async function(){
+  if(this.slug){
+          return 
+      }
+      const baseSlug = slugify(this.name, { lower: true, strict: true });
+  
+      let slug = baseSlug;
+      let count = 1;
+  
+      while (await Society.exists({ slug })) {
+          count++;
+          slug = `${baseSlug}-${count}`;
+      }
+      this.slug=slug;
+      return;
+})
 
 export const Event = mongoose.model("Event", eventSchema);

@@ -22,11 +22,14 @@ export const uploadImageOnCloudinary = async (imagePath) => {
     try {
       
       const result = await cloudinary.uploader.upload(imagePath, options);
-      await fs.unlink(imagePath)
+ 
 
       return {publicId: result?.public_id ,url: result?.secure_url};
     } catch (error) {
       console.error(error);
+    
+    }
+    finally{
       await fs.unlink(imagePath)
     }
 };
