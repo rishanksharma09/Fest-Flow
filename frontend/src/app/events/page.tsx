@@ -9,31 +9,30 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import EventCard from "./components/EventCard"
 import { api } from "@/lib/axios"
-import { lazy, Suspense } from 'react'
+import EventCardSkeleton from "./components/EventCardSkeleton"
 
 
 export type EventListItem = {
-    _id:string
-  name: string
-  startAt: string
-  endAt: string
-  location: string
-
-  poster: {
-    url: string
-  }
-
-  hostedBy: {
     _id: string
     name: string
-    slug: string
-    avatar?: {
-      url?: string
+    startAt: string
+    endAt: string
+    location: string
+    poster: {
+        url: string
     }
-  }
+
+    hostedBy: {
+        _id: string
+        name: string
+        slug: string
+        avatar?: {
+            url?: string
+        }
+    }
 }
 
 
@@ -41,24 +40,67 @@ export default function EventsPage() {
 
     const [events, setEvents] = useState<EventListItem[]>([])
     const [error, setError] = useState("")
+    const [page, setPage] = useState(1)
+    const pageRef = useRef(1)
+
+    const [loading, setLoading] = useState(false)
+    const [hasMore, setHasMore] = useState(true)
+
+    const loaderRef = useRef<HTMLDivElement | null>(null)
+
+
+
+    const fetchEvents = async () => {
+        if (loading || !hasMore) return
+
+        setLoading(true);
+        const LIMIT = 6
+
+        try {
+            const res = await api.get("/events/get-all-events", {
+                params: { page:pageRef.current, limit: LIMIT },
+            })
+            setEvents((prev) => [...prev, ...res.data.data]);
+            console.log(page)
+            if (res.data.data.length < LIMIT) {
+                setHasMore(false);
+            }else {
+      setPage(prev => {
+        pageRef.current = prev + 1
+        return prev + 1
+      })
+    }
+            console.log(res.data.data)
+        } catch (error: any) {
+            setError(error.response.data.message)
+            console.log(error.response.data.message)
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+
 
     useEffect(() => {
-        const fetchSocieties = async () => {
-            try {
-                const res = await api.get("/events/get-all-events")
-                setEvents(res.data.data);
-                console.log(res.data.data)
-            } catch (error: any) {
-                setError(error.response.data.message)
-                console.log(error.response.data.message)
-            }
-        }
-        fetchSocieties()
+        if (!loaderRef.current || !hasMore) return
 
-    }, [])
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+               
 
+                if (entry.isIntersecting) {
+                    fetchEvents()
+                     setPage(prev => prev + 1)
+                }
+            },
+            { threshold: 1 }
+        )
 
+        observer.observe(loaderRef.current)
 
+        return () => observer.disconnect()
+    }, [hasMore])
 
 
 
@@ -109,15 +151,23 @@ export default function EventsPage() {
                             key={event._id}
                             title={event.name}
                             startDate={new Date(event.startAt)}
-                            poster={event.poster }
+                            poster={event.poster}
                             endDate={new Date(event.endAt)}
                             venue={event.location}
-                            time="10:00 AM – 6:00 PM"
                             societyName={event.hostedBy?.name ?? "Unknown Society"}
                             societyAvatar={event.hostedBy?.avatar?.url}
                         />
                     ))}
+                    {loading &&
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <EventCardSkeleton key={`skeleton-${i}`} />
+                        ))}
+
                 </div>
+
+
+                {hasMore && <div ref={loaderRef} className="h-10" />}
+
 
             </div>
         </div>

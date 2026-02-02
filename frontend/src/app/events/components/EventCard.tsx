@@ -26,15 +26,14 @@ export default function EventCard({
     endDate,
     poster,
     venue,
-    time,
     societyName,
     societyAvatar,
 }: EventCardProps) {
 
     let statusText = ""
+    let timeText = ""
 
     const now = new Date()
-    const start = new Date(startDate)
 
 
     if (now < startDate) {
@@ -53,6 +52,17 @@ export default function EventCard({
         statusText = "Passed"
     }
 
+    const startTime = startDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+
+  const endTime = endDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
 
 
     const sameDay =
@@ -71,6 +81,13 @@ export default function EventCard({
     if (!sameDay && month1 !== month2) {
         sameMonth = false
     }
+
+    if(sameDay){
+        timeText=`${startTime} – ${endTime}`
+     }
+    else{
+    timeText= `${startTime} (Day 1) – ${endTime} (Last day)`
+     }
 
     const startDay = startDate.getDate()
     const endDay = endDate.getDate()
@@ -124,7 +141,7 @@ export default function EventCard({
                     </p>
 
                     <p className="text-sm text-slate-500">
-                        {time}
+                        {timeText}
                     </p>
 
                     <p className="text-xs text-emerald-600 font-medium pt-1">
