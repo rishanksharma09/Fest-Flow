@@ -18,7 +18,8 @@ const eventSchema = new mongoose.Schema(
     },
     slug:{
       type:String,
-      trim:true
+      trim:true,
+      unique:true
     },
 
     startAt: {
@@ -92,7 +93,7 @@ eventSchema.pre('save', async function(){
       let slug = baseSlug;
       let count = 1;
   
-      while (await Society.exists({ slug })) {
+      while (await Event.exists({ slug })) {
           count++;
           slug = `${baseSlug}-${count}`;
       }

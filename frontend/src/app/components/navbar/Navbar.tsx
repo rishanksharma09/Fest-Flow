@@ -25,7 +25,7 @@ export default function Navbar() {
           <Link className="text-sm font-medium text-slate-700 hover:text-slate-900" href="#">
             Home
           </Link>
-          <Link className="text-sm font-medium text-slate-700 hover:text-slate-900" href="#popular">
+          <Link className="text-sm font-medium text-slate-700 hover:text-slate-900" href="/events">
             Events
           </Link>
           <Link className="text-sm font-medium text-slate-700 hover:text-slate-900" href="#">

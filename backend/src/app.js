@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import { userRouter } from "./routes/user.route.js";
 import errorHandler from "./middlewares/errorHandler.middleware.js";
 import { societyRouter } from "./routes/society.route.js";
+import { eventRouter } from "./routes/event.routes.js";
 
 
 export const app = express();
@@ -25,6 +26,9 @@ app.use(express.static("public"));
 app.use("/api/v1/user",userRouter)
 
 app.use("/api/v1/society",societyRouter)
+
+app.use("/api/v1/events",eventRouter)
+
 
 app.use(errorHandler)
 

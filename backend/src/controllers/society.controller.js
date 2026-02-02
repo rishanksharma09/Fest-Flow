@@ -124,7 +124,8 @@ export const getSocietyInfo = asyncHandler(async (req, res) => {
                 ],
                 as: "adminsInfo"
             }
-        }
+        },
+      
     ])
 
 
@@ -261,6 +262,8 @@ export const addAdminToSociety = asyncHandler(async (req, res) => {
     });
     return res.status(200).json(new ApiResponse(200, admin, "admin added successfully"))
 })
+
+
 
 
 

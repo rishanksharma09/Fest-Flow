@@ -1,0 +1,125 @@
+"use client"
+
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { useEffect, useState } from "react"
+import EventCard from "./components/EventCard"
+import { api } from "@/lib/axios"
+import { lazy, Suspense } from 'react'
+
+
+export type EventListItem = {
+    _id:string
+  name: string
+  startAt: string
+  endAt: string
+  location: string
+
+  poster: {
+    url: string
+  }
+
+  hostedBy: {
+    _id: string
+    name: string
+    slug: string
+    avatar?: {
+      url?: string
+    }
+  }
+}
+
+
+export default function EventsPage() {
+
+    const [events, setEvents] = useState<EventListItem[]>([])
+    const [error, setError] = useState("")
+
+    useEffect(() => {
+        const fetchSocieties = async () => {
+            try {
+                const res = await api.get("/events/get-all-events")
+                setEvents(res.data.data);
+                console.log(res.data.data)
+            } catch (error: any) {
+                setError(error.response.data.message)
+                console.log(error.response.data.message)
+            }
+        }
+        fetchSocieties()
+
+    }, [])
+
+
+
+
+
+
+    return (
+        <div className="relative min-h-[calc(100vh-80px)] overflow-hidden py-12">
+            <div className="absolute inset-0 -z-10">
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white" />
+                <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-100 blur-3xl" />
+                <div className="absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-emerald-100 blur-3xl" />
+            </div>
+            <div className="max-w-7xl mx-auto space-y-10">
+
+                {/* Header */}
+                <div>
+                    <h1 className="text-3xl font-semibold text-slate-900">
+                        Events
+                    </h1>
+                    <p className="text-slate-600 mt-1">
+                        Discover and manage all FestFlow events in one place
+                    </p>
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <Input
+                        placeholder="Search events..."
+                        className="sm:max-w-sm"
+                    />
+
+                    <Select>
+                        <SelectTrigger className="sm:w-44">
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="upcoming">Upcoming</SelectItem>
+                            <SelectItem value="ongoing">Ongoing</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                </div>
+
+                {/* Events Grid */}
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {/* Event Card */}
+                    {events.map((event: EventListItem) => (
+                        <EventCard
+                            key={event._id}
+                            title={event.name}
+                            startDate={new Date(event.startAt)}
+                            poster={event.poster }
+                            endDate={new Date(event.endAt)}
+                            venue={event.location}
+                            time="10:00 AM – 6:00 PM"
+                            societyName={event.hostedBy?.name ?? "Unknown Society"}
+                            societyAvatar={event.hostedBy?.avatar?.url}
+                        />
+                    ))}
+                </div>
+
+            </div>
+        </div>
+    )
+}
