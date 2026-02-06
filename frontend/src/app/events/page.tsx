@@ -19,7 +19,8 @@ export type EventListItem = {
     _id: string
     name: string
     startAt: string
-    endAt: string
+    endAt: string,
+    slug:string,
     location: string
     poster: {
         url: string

@@ -15,10 +15,12 @@ import {
   Users,
 } from "lucide-react";
 import { useAuthStore } from "../../store/useAuthStore";
+import { EventListItem } from "../../events/page";
 
-export type AdminsInfo = {role: string,
-   permissions: {manageEvents: boolean, manageMembers: boolean, manageContent: boolean, manageSettings: boolean},
-   userInfo:{_id: string, name: string, username: string, email: string, avatar: {publicId: string, url: string} | null};
+export type AdminsInfo = {
+  role: string,
+  permissions: { manageEvents: boolean, manageMembers: boolean, manageContent: boolean, manageSettings: boolean },
+  userInfo: { _id: string, name: string, username: string, email: string, avatar: { publicId: string, url: string } | null };
 }
 
 export type Society = {
@@ -55,6 +57,8 @@ export type Society = {
 };
 
 
+
+
 function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
@@ -76,42 +80,61 @@ export default function SocietyProfilePage() {
   //     posterUrl: "/poster.jpg",
   //   }"
 
+
   const currentUser = useAuthStore((state) => state.user);
-   
+
   const { slug } = useParams();
   const [society, setSociety] = useState<Society | null>(null);
   const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
   const [currentAdmin, setCurrentAdmin] = useState<AdminsInfo | null>(null);
- 
+  const [events, setEvents] = useState<EventListItem[] | null>(null)
+
   useEffect(() => {
     const fetchSociety = async () => {
       try {
         const response = await api.get(`/society/get-society-info/${slug}`);
         setSociety(response.data.data[0]);
         console.log("Fetched society:", response.data.data[0]);
-       
+
       } catch (error) {
         console.error("Error fetching society:", error);
-      }}
+      }
+    }
 
-      fetchSociety();
+    fetchSociety();
   }, []);
 
   useEffect(() => {
-  if (!society || !currentUser) return;
-
- 
-  const currentAdmin = society?.adminsInfo?.find(
-    (admin: AdminsInfo) =>
-      admin.userInfo.username === currentUser?.username
-  );
-  setCurrentAdmin(currentAdmin || null);
+    if (!society || !currentUser) return;
 
 
-  setIsCurrentUserAdmin(!!currentAdmin);
-  console.log("currentUser:", currentUser);
-  console.log("Is current user admin:", !!currentAdmin);
-}, [society, currentUser]);
+    const currentAdmin = society?.adminsInfo?.find(
+      (admin: AdminsInfo) =>
+        admin.userInfo.username === currentUser?.username
+    );
+    setCurrentAdmin(currentAdmin || null);
+
+
+    setIsCurrentUserAdmin(!!currentAdmin);
+    console.log("currentUser:", currentUser);
+    console.log("Is current user admin:", !!currentAdmin);
+  }, [society, currentUser]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const events = await api.get(`/events/get-all-events?limit=3&page=1&hostedBy=${slug}`)
+        setEvents(events.data.data);
+        console.log(events.data.data)
+      } catch (error: any) {
+        console.log(error.response.data)
+      }
+    }
+    fetchEvents()
+
+  }, []
+
+  )
 
   const [joined, setJoined] = useState(false);
 
@@ -203,8 +226,8 @@ export default function SocietyProfilePage() {
                 </div>
               </div>
 
-        
-              
+
+
             </div>
 
             {/* Description */}
@@ -267,30 +290,37 @@ export default function SocietyProfilePage() {
               </h2>
 
               <div className="mt-4 space-y-3">
-                {[
-                  {
-                    title: "Hackathon Prep Session",
-                    meta: "Tomorrow • 5:00 PM • Seminar Hall",
-                  },
-                  {
-                    title: "Open Source Sprint",
-                    meta: "This Weekend • Online",
-                  },
-                  {
-                    title: "DSA Contest Practice",
-                    meta: "Friday • 6:30 PM • Lab 2",
-                  },
-                ].map((x) => (
-                  <div
-                    key={x.title}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-                  >
-                    <p className="text-sm font-semibold text-slate-900">
-                      {x.title}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-600">{x.meta}</p>
-                  </div>
-                ))}
+                {events?.map((x) => {
+                  const date = new Date(x.startAt)
+
+                  const formattedDate = date.toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+
+                  const formattedTime = date.toLocaleTimeString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+
+                  return (
+                    <Link href={`/events/${slug}`}>
+                    <div 
+                      key={x.slug}
+                      className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 cursor-pointer"
+                    >
+                      <p className="text-sm font-semibold text-slate-900">
+                        {x.name}
+                      </p>
+
+                      <p className="mt-3 text-xs text-slate-600">
+                        {formattedDate}  •  {formattedTime}  •  {x.location}
+                      </p>
+                    </div>
+                    </Link>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -309,7 +339,7 @@ export default function SocietyProfilePage() {
                   <span className="truncate">{society?.email}</span>
                 </div>
 
-                  {/* <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                {/* <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
                     <MapPin size={16} className="text-slate-500" />
                     <span className="truncate">{society?.location}</span>
                   </div> */}
@@ -333,7 +363,7 @@ export default function SocietyProfilePage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
                   Admins
-                  {isCurrentUserAdmin && currentAdmin?.permissions.manageMembers && <Link href={`/societies/${society?.slug}/add-admin`}  className="ml-2">
+                  {isCurrentUserAdmin && currentAdmin?.permissions.manageMembers && <Link href={`/societies/${society?.slug}/add-admin`} className="ml-2">
                     <span>
                       +
                     </span>
@@ -368,7 +398,7 @@ export default function SocietyProfilePage() {
                         </p>
                         <p className="text-xs text-slate-500">{a.role}</p>
                         <p className="text-xs text-slate-400">{a.userInfo.email}</p>
-                        
+
                       </div>
                     </div>
 
