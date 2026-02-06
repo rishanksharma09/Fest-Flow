@@ -154,6 +154,7 @@ export const getEventBySlug = asyncHandler(async(req,res)=>{
       endAt: 1,
       location: 1,
       slug: 1,
+      poster:1,
       "hostedBy._id": 1,
       "hostedBy.name": 1,
       "hostedBy.slug": 1,

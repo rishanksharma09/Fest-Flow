@@ -13,6 +13,7 @@ import { useEffect, useState, useRef } from "react"
 import EventCard from "./components/EventCard"
 import { api } from "@/lib/axios"
 import EventCardSkeleton from "./components/EventCardSkeleton"
+import Link from "next/link"
 
 
 export type EventListItem = {
@@ -21,7 +22,8 @@ export type EventListItem = {
     startAt: string
     endAt: string,
     slug:string,
-    location: string
+    location: string,
+
     poster: {
         url: string
     }
@@ -148,6 +150,7 @@ export default function EventsPage() {
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {/* Event Card */}
                     {events.map((event: EventListItem) => (
+                        <Link href={`/events/${event.slug}`}>
                         <EventCard
                             key={event._id}
                             title={event.name}
@@ -158,6 +161,7 @@ export default function EventsPage() {
                             societyName={event.hostedBy?.name ?? "Unknown Society"}
                             societyAvatar={event.hostedBy?.avatar?.url}
                         />
+                        </Link>
                     ))}
                     {loading &&
                         Array.from({ length: 3 }).map((_, i) => (
