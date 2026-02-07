@@ -9,6 +9,8 @@ userRouter.route("/register").post(upload.single("avatar"),registerUser)
 
 userRouter.route("/login").post(loginUser)
 
+
+
 //Secured routes
 
 userRouter.route("/logout").post(verifyJwt,logoutUser)

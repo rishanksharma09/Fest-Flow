@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/useAuthStore";
 import { PasswordInput } from "../../components/ui/PasswordInput";
 
+
 export default function SignInPage() {
 
   const router = useRouter()
@@ -17,6 +18,11 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+const handleGoogleLogin = () => {
+  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/google`;
+};
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,6 +51,9 @@ export default function SignInPage() {
       setLoading(false);
     }
   };
+
+    
+
 
 
   return (
@@ -79,7 +88,7 @@ export default function SignInPage() {
                       </div>
                     )}
 
-                    <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
+                    <button onClick={handleGoogleLogin} className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50">
                       <span className="text-base">G</span>
                       Continue with Google
                     </button>
@@ -160,6 +169,8 @@ export default function SignInPage() {
           </div>
         </div>
       </div>
+      
     </>
+    
   );
 }

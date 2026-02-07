@@ -10,7 +10,7 @@ const options = {
   httpOnly: true,
   secure: true
 }
-const generateAccessAndRefreshToken = async (_id) => {
+export const generateAccessAndRefreshToken = async (_id) => {
   try {
     const user = await User.findById(_id)
     if (!user) {
